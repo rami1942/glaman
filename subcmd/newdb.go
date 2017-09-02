@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func NewDB(logger *log.Logger, fileName string) (err error) {
+func NewDB(logger *log.Logger, fileName, region, vault, basedir, password string) (err error) {
 
 	// すでに存在していたらエラーにする
 	_, err = os.Stat(fileName)
@@ -35,6 +35,8 @@ func NewDB(logger *log.Logger, fileName string) (err error) {
 		logger.Printf("create table failed.")
 		return
 	}
+
+	_, err = db.Exec("insert into config (k, v) values ('region', ?), ('vault', ?), ('basedir', ?), ('password', ?)", region, vault, basedir, password)
 
 	return
 }

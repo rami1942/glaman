@@ -17,7 +17,12 @@ var (
 	goptDBName = app.Flag("db", "データベース名").Short('d').Default(home + "/Documents/glaman.sqlite3").ExistingFile()
 
 	scmdNew  = app.Command("newdb", "インデックスDBの新規作成")
-	sNewName = scmdNew.Arg("dbname", "インデックスDB名").Required().String()
+	sNewName = scmdNew.Arg("dbname", "インデックスDB名").Default(home + "/Documents/glaman.sqlite3").String()
+	sNewRegion = scmdNew.Flag("region", "リージョン").Required().String()
+	sNewVault = scmdNew.Flag("vault", "Vault名").Required().String()
+	sNewBaseDir = scmdNew.Flag("basedir", "同期対象ディレクトリ").Required().ExistingDir()
+	sNewPassword = scmdNew.Flag("password", "パスワード").Required().String()
+
 
 	scmdLs     = app.Command("ls", "アーカイブファイル一覧")
 	sLsPattern = scmdLs.Arg("dir", "ディレクトリ").String()
@@ -55,7 +60,7 @@ func main() {
 
 	pv := kingpin.MustParse(app.Parse(os.Args[1:]))
 	if pv == scmdNew.FullCommand() {
-		err := subcmd.NewDB(logger, *sNewName)
+		err := subcmd.NewDB(logger, *sNewName, *sNewRegion, *sNewVault, *sNewBaseDir, *sNewPassword)
 		if err != nil {
 			logger.Printf("%+v\n", err)
 		}
